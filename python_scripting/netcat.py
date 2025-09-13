@@ -15,4 +15,4 @@ def execute(cmd):
     return output.decode()
 
 
-execute("ls -l")
+print(execute("ls -l"))
