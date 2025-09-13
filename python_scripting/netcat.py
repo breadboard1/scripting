@@ -14,6 +14,23 @@ def execute(cmd):
     output = subprocess.check_output(shlex.split(cmd), stderr=subprocess.STDOUT)
     return output.decode()
 
+class NetCat:
+    def __init__(self, args, buffer=None):
+        self.args = args
+        self.buffer = buffer
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.setsockpot(socket.SQL_SOCKET, socket.SO_REUSEADDR, 1)
+
+    def run(self):
+        if self.args.listen:
+            self.listen()
+        else:
+            self.send()
+
+    def send(self):
+        self.socket.connect((self.args.target, self.args.port))
+        if self.buffer:
+            self.socket.send(self.buffer)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -33,12 +50,15 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--port', type=int, default=5555, help='specified port')
     parser.add_argument('-t', '--target', default='192.168.1.203', help='specified IP')
     parser.add_argument('-u', '--upload', help='upload file')
+
     args = parser.parse_args()
     if args.listen:
         buffer = ''
     else:
         buffer = sys.stdin.read()
-    # nc = NetCat(args, buffer.encode())
-    # nc.run()
+
+    # print(buffer)
+    nc = NetCat(args, buffer.encode())
+    nc.run()
 
 
